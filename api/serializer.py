@@ -141,6 +141,11 @@ class AuthorSerializer(serializers.Serializer):
     posts = serializers.IntegerField(default=0)
     likes = serializers.IntegerField(default=0)
     bookmarks = serializers.IntegerField(default=0)
+    categories = serializers.IntegerField(default=0)
+    tags = serializers.IntegerField(default=0)
+    projects = serializers.IntegerField(default=0)
+    users = serializers.IntegerField(default=0)
+
 
 
 class CategorySerializer(serializers.ModelSerializer):

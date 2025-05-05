@@ -30,6 +30,7 @@ import random
 # Custom Imports
 from api import serializer as api_serializer
 from api import models as api_models
+from portfolio import models as portfolio_models
 from portfolio.models import Tag
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -265,6 +266,9 @@ class DashboardStats(generics.ListAPIView):
         likes = api_models.Post.objects.filter(user=user).aggregate(total_likes=Sum("likes"))['total_likes']
         bookmarks = api_models.Bookmark.objects.all().count()
         categories = api_models.Category.objects.all().count()
+        tags = portfolio_models.Tag.objects.all().count()
+        projects = portfolio_models.ProjectUpload.objects.all().count()
+        users = api_models.User.objects.all().count()
 
 
         return [{
@@ -273,6 +277,9 @@ class DashboardStats(generics.ListAPIView):
             "likes":likes,
             "bookmarks":bookmarks,
             "categories":categories,
+            "tags":tags,
+            "projects": projects,
+            "users":users,
         }]
     
     def list(self, request, *args, **kwargs):
