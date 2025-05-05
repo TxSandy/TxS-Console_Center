@@ -1,15 +1,17 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
+from .models import Category
 
 from api import models as api_models
+from portfolio.models import Tag
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
-        token['full-name'] = user.full_name
+        token['full_name'] = user.full_name
         token['email'] = user.email
         token['username'] = user.username
         return token
@@ -77,19 +79,24 @@ class CategorySerializer(serializers.ModelSerializer):
 
  
 class CommentSerializer(serializers.ModelSerializer):
+    replies = serializers.SerializerMethodField()
+
     class Meta:
         model = api_models.Comment
-        fields = "__all__"
+        fields = ['id', 'post', 'parent', 'name', 'email', 'comment', 'reply', 'date', 'replies']
 
-    def __init__(self, *args, **kwargs):
-        super(CommentSerializer, self).__init__(*args,**kwargs)
-        request = self.context.get("request")
-        if request and request.method == "POST":
-            self.Meta.depth = 0
-        else:
-            self.Meta.depth = 1
+    def get_replies(self, obj):
+        replies_qs = obj.replies.all().order_by('-date')
+        return CommentSerializer(replies_qs, many=True, context=self.context).data if replies_qs.exists() else []
+
 
 class PostSerializer(serializers.ModelSerializer):
+    tags = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='name'
+    )
+    comments = CommentSerializer(many=True)
     class Meta:
         model = api_models.Post
         fields = "__all__"
@@ -134,3 +141,15 @@ class AuthorSerializer(serializers.Serializer):
     posts = serializers.IntegerField(default=0)
     likes = serializers.IntegerField(default=0)
     bookmarks = serializers.IntegerField(default=0)
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'title', 'image', 'slug']
+        read_only_fields = ['slug']
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']

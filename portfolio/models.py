@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
 from django.utils.text import slugify
-from api.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -17,11 +16,11 @@ class Tag(models.Model):
 
 
 class ProjectUpload(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
+    author = models.ForeignKey("api.User", on_delete=models.CASCADE, related_name='projects')
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=255, blank=True)
     live_link = models.CharField(max_length=255)
-    guthub_link = models.CharField(max_length=255)
+    github_link = models.CharField(max_length=255)
     desc = models.TextField()
     tags = models.ManyToManyField(Tag, related_name='tags', blank=True)
     image = models.ImageField(upload_to='project_images/', blank=True, null=True)

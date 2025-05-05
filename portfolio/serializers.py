@@ -22,7 +22,7 @@ class ProjectUploadSerializer(serializers.ModelSerializer):
         model = ProjectUpload
         fields = [
             'id', 'author', 'author_username', 'title', 'slug', 'desc',
-            'live_link', 'guthub_link', 'image', 'is_published', 'tags',
+            'live_link', 'github_link', 'image', 'is_published', 'tags',
             'tag_names', 'created_at', 'updated_at'
         ]
         read_only_fields = ('created_at', 'updated_at', 'slug', 'author')
@@ -44,9 +44,26 @@ class ProjectUploadSerializer(serializers.ModelSerializer):
     def _handle_tags(self, project, tag_names):
         for name in tag_names:
             cleaned_name = name.strip()
-            if cleaned_name:  # Avoid creating empty tags
+            if cleaned_name:  
                 tag, _created = Tag.objects.get_or_create(name=cleaned_name)
                 project.tags.add(tag)
+
+class ProjectUploadSerializer(serializers.ModelSerializer):
+    tag_names = serializers.SerializerMethodField()
+    src = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProjectUpload
+        fields = ['title', 'desc', 'live_link', 'github_link', 'tag_names', 'src']
+
+    def get_tag_names(self, obj):
+        return ", ".join(tag.name for tag in obj.tags.all())
+
+    def get_src(self, obj):
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return ""
 
 
 class ContactMessageSerializer(serializers.ModelSerializer):

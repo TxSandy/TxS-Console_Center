@@ -4,28 +4,33 @@ from django.db.models.signals import post_save
 from django.utils.text import slugify
 from shortuuid.django_fields import ShortUUIDField
 import shortuuid 
+from portfolio.models import Tag as model
 
 # Create your models here.
 
+
 class User(AbstractUser):
-    username = models.CharField(unique=True, max_length=100)
+    username = models.CharField(max_length=100, unique=True, null=True, blank=True)
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username']  # Required when creating superusers
 
     def __str__(self):
-        return self.username
+        return self.email  # Better if you want email as unique identity
 
     def save(self, *args, **kwargs):
-        email_username, mobile = self.email.split("@")
-        if self.full_name == "" or self.full_name == None:
+        if not self.email:
+            raise ValueError("Users must have an email address")
+
+        email_username = self.email.split("@")[0]
+        if not self.full_name:
             self.full_name = email_username
-        if self.username == "" or self.username == None:
+        if not self.username:
             self.username = email_username
 
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class Profile(models.Model):
@@ -95,7 +100,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     image = models.FileField(upload_to="image", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    tags = models.CharField(max_length=100, default="Untagged")
+    tags = models.ManyToManyField("portfolio.Tag", blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='posts')
     status = models.CharField(max_length=100, choices=STATUS, default="Active")
     view = models.IntegerField(default=0)
@@ -111,7 +116,7 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug == None:
-            self.slug = slugify(self.title) + "-" + shortuuid.uuid()[:2]
+            self.slug = slugify(self.title) + "-" + shortuuid.uuid()[:5]
         super(Post, self).save(*args, **kwargs)
     
     def comments(self):
@@ -120,6 +125,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     comment = models.TextField(null=True, blank=True)

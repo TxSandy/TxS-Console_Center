@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from api import views as api_views
 
+
 urlpatterns = [
     # Userauths API Endpoints
     path('user/token/', api_views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -20,10 +21,16 @@ urlpatterns = [
 
     # Dashboard APIS
     path('author/dashboard/stats/<user_id>/', api_views.DashboardStats.as_view()),
-    path('author/dashboard/comment-list/<user_id>', api_views.DashboardCommentLists.as_view()),
+    path('author/dashboard/post-list/<user_id>/', api_views.DashboardPostLists.as_view()),
+    path('author/dashboard/comment-list/<user_id>/', api_views.DashboardCommentLists.as_view()),
     path('author/dashboard/notification-list/<user_id>/', api_views.DashboardNotificationsList.as_view()),
     path('author/dashboard/notification-mark-seen/', api_views.DashboardMarkNotificationAsSeen.as_view()),
     path('author/dashboard/reply-comment/', api_views.DashboardCommentAPIView.as_view()),
     path('author/dashboard/post-create/', api_views.DashboardPostCreateAPIView.as_view()),
     path('author/dashboard/post-detail/<user_id>/<post_id>/', api_views.DashboardPostEditAPIView.as_view()),
+
+    #txsandy Dasboard
+    path('blog/categories/create/', api_views.CategoryCreateAPIView.as_view(), name='category_create'),
+    path('tags/', api_views.TagListCreateView.as_view(), name='tag-list-create'),
+    path('tags/<int:pk>/', api_views.TagUpdateDeleteView.as_view(), name='tag-update-delete'),
 ]

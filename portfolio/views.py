@@ -31,6 +31,7 @@ class ProjectUploadDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectUploadSerializer
     throttle_classes = [StandardUserThrottle]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = ProjectUpload.objects.filter(is_published=True)
 
     def get_queryset(self):
         return ProjectUpload.objects.select_related('author').prefetch_related('tags')
@@ -54,3 +55,10 @@ class ContactMessageListView(generics.ListAPIView):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['first_name', 'last_name', 'email', 'message']
     ordering = ['-submitted_at']
+
+class ProjectListView(generics.ListAPIView):
+    queryset = ProjectUpload.objects.filter(is_published=True)
+    serializer_class = ProjectUploadSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}

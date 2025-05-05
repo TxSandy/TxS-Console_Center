@@ -15,7 +15,7 @@ class ProjectUploadAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('author', 'title', 'slug', 'desc', 'live_link', 'guthub_link', 'image', 'is_published', 'tags')
+            'fields': ('author', 'title', 'slug', 'desc', 'live_link', 'github_link', 'image', 'is_published', 'tags')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
