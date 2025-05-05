@@ -48,6 +48,14 @@ class ProjectUploadSerializer(serializers.ModelSerializer):
                 tag, _created = Tag.objects.get_or_create(name=cleaned_name)
                 project.tags.add(tag)
 
+
+    def _handle_tags(self, project, tag_names):
+        for name in tag_names:
+            cleaned_name = name.strip()
+            if cleaned_name:
+                tag, _ = Tag.objects.get_or_create(name=cleaned_name)
+                project.tags.add(tag)
+
 class ProjectUploadSerializer(serializers.ModelSerializer):
     tag_names = serializers.SerializerMethodField()
     src = serializers.SerializerMethodField()
