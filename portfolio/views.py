@@ -1,6 +1,5 @@
-from rest_framework import generics, filters, status
+from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
-from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
 from .models import ProjectUpload, ContactMessage
 from .serializers import ProjectUploadSerializer, ContactMessageSerializer
