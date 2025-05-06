@@ -342,32 +342,47 @@ class DashboardPostCreateAPIView(generics.CreateAPIView):
     serializer_class = api_serializer.PostSerializer
     permission_classes = [AllowAny]
 
-    def create(self, request, *arg, **kwargs):
+    def create(self, request, *args, **kwargs):
         print(request.data)
 
         user_id = request.data.get("user_id")
         title = request.data.get("title")
-        image = request.data.get("image")
+        image = request.FILES.get("image")
         description = request.data.get("description")
-        tag_id = request.data.get("tag_id")
-        category_id = request.data.get("category_id")
-        post_status = request.data.get("post_status")
+        tag_names = request.data.get("tags", "").split(",")
+        category_id = request.data.get("category")
+        post_status = request.data.get("status")
+        slug = request.data.get("slug")
 
-        user = api_models.User.objects.get(id=user_id)
-        category = api_models.Category.objects.get(id=category_id)
-        tags = Tag.objects.get(id=tag_id)
+        try:
+            user = api_models.User.objects.get(id=user_id)
+            category = api_models.Category.objects.get(id=category_id)
+            profile = user.profile 
+        except (api_models.User.DoesNotExist, api_models.Category.DoesNotExist):
+            return Response({"error": "User or Category not found."}, status=400)
+        except api_models.Profile.DoesNotExist:
+            profile = None  
 
-        api_models.Post.objects.create(
+        post = api_models.Post.objects.create(
             user=user,
+            profile=profile,  
             title=title,
             image=image,
             description=description,
-            tags=tags,
             category=category,
             status=post_status,
+            slug=slug,
         )
 
-        return Response({'message': "Post Create Successfully"}, status=status.HTTP_201_CREATED)
+        for tag_name in tag_names:
+            tag_name = tag_name.strip()
+            if tag_name:
+                tag_obj, _ = portfolio_models.Tag.objects.get_or_create(name=tag_name)
+                post.tags.add(tag_obj)
+
+        post.save()
+        return Response({'message': "Post Created Successfully"}, status=status.HTTP_201_CREATED)
+
     
 class DashboardPostEditAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = api_serializer.PostSerializer
