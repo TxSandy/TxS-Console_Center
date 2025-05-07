@@ -19,6 +19,13 @@ from api import models as api_models
 from portfolio import models as portfolio_models
 from portfolio.models import Tag
 
+from django.http import HttpResponse
+
+
+def home(request):
+    return HttpResponse("Welcome to the TxSandy API!")
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = api_serializer.MyTokenObtainPairSerializer
 

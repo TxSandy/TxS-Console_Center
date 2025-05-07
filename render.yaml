@@ -30,4 +30,5 @@ services:
         path: /media/*
         allowOrigins:
           - "*"
-    healthCheckPath: "/"
+    healthCheckPath: "/admin"
+
