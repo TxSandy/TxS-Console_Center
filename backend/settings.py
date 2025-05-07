@@ -26,10 +26,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="").split()
+# ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="").split()
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'txs-admin-console.devxnet.cloud',
+    'stackopsblog.devxnet.cloud',
+    'txsandy.devxnet.cloud',
+    'txs-console-center.onrender.com',
+]
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+print("===> ALLOWED_HOSTS =", ALLOWED_HOSTS)
 
 # Application definition
 
