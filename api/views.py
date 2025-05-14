@@ -262,6 +262,7 @@ class DashboardStats(generics.ListAPIView):
         tags = portfolio_models.Tag.objects.all().count()
         projects = portfolio_models.ProjectUpload.objects.all().count()
         users = api_models.User.objects.all().count()
+        comments = api_models.Comment.objects.all().count()
 
 
         return [{
@@ -273,6 +274,7 @@ class DashboardStats(generics.ListAPIView):
             "tags":tags,
             "projects": projects,
             "users":users,
+            "comments":comments,
         }]
     
     def list(self, request, *args, **kwargs):
@@ -454,3 +456,5 @@ class DashboardClearAllNotifications(APIView):
         user_id = request.data.get("user_id")
         api_models.Notification.objects.filter(user_id=user_id).update(seen=True)
         return Response({"message": "All notifications cleared"}, status=200)
+
+

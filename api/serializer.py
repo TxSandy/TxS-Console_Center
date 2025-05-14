@@ -145,6 +145,7 @@ class AuthorSerializer(serializers.Serializer):
     tags = serializers.IntegerField(default=0)
     projects = serializers.IntegerField(default=0)
     users = serializers.IntegerField(default=0)
+    comments = serializers.IntegerField(default=0)
 
 
 
