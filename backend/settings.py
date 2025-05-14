@@ -25,7 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = config("DJANGO_SECRET_KEY")
+SECRET_KEY = 'django-insecure--usn$$sxjbtm^may$i-nxsic^en6gqh4$*cu1ox(*%)nokh%d@'
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
+DEBUG = True
 # ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="").split()
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'visitor',
     'portfolio',
     'corsheaders',
     'rest_framework',
@@ -95,15 +98,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
-    'default': dj_database_url.parse(config("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+# DATABASES = {
+#     'default': dj_database_url.parse(config("DATABASE_URL"))
+# }
 
 
 # Password validation
@@ -190,6 +193,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
     "https://txs-console-center.onrender.com",
     "https://txsandy.devxnet.cloud",
     "https://stackopsblog.devxnet.cloud",
@@ -197,7 +201,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
     'accept',
     'authorization',

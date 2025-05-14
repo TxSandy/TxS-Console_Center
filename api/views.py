@@ -447,3 +447,10 @@ class TagUpdateDeleteView(APIView):
         tag = get_object_or_404(Tag, pk=pk)
         tag.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class DashboardClearAllNotifications(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        api_models.Notification.objects.filter(user_id=user_id).update(seen=True)
+        return Response({"message": "All notifications cleared"}, status=200)
